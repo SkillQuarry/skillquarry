@@ -3,6 +3,84 @@ import type { Course, Module, PracticeProblem, Topic, TopicContent } from '../..
 import type { TopicDetail } from './topic.types'
 
 export const topicService = {
+  async getAdjacentTopics(topicId: string): Promise<{ previousTopic: Topic | null; nextTopic: Topic | null }> {
+    const { data: currentTopicData, error: currentTopicError } = await supabase
+      .from('topics')
+      .select('*')
+      .eq('id', topicId)
+      .eq('published', true)
+      .maybeSingle()
+
+    if (currentTopicError) {
+      throw currentTopicError
+    }
+
+    if (!currentTopicData) {
+      return { previousTopic: null, nextTopic: null }
+    }
+
+    const currentTopic = currentTopicData as Topic
+
+    const { data: currentModuleData, error: currentModuleError } = await supabase
+      .from('modules')
+      .select('*')
+      .eq('id', currentTopic.module_id)
+      .eq('published', true)
+      .maybeSingle()
+
+    if (currentModuleError) {
+      throw currentModuleError
+    }
+
+    if (!currentModuleData) {
+      return { previousTopic: null, nextTopic: null }
+    }
+
+    const { data: moduleRowsData, error: modulesError } = await supabase
+      .from('modules')
+      .select('*')
+      .eq('course_id', currentModuleData.course_id)
+      .eq('published', true)
+      .order('order_index', { ascending: true })
+
+    if (modulesError) {
+      throw modulesError
+    }
+
+    const moduleRows = (moduleRowsData ?? []) as Module[]
+    const moduleIds = moduleRows.map((module) => module.id)
+
+    let topicRows: Topic[] = []
+
+    if (moduleIds.length > 0) {
+      const { data: topicsData, error: topicsError } = await supabase
+        .from('topics')
+        .select('*')
+        .in('module_id', moduleIds)
+        .eq('published', true)
+        .order('order_index', { ascending: true })
+
+      if (topicsError) {
+        throw topicsError
+      }
+
+      topicRows = (topicsData ?? []) as Topic[]
+    }
+
+    const orderedTopics = moduleRows.flatMap((module) =>
+      topicRows
+        .filter((topic) => topic.module_id === module.id)
+        .sort((left, right) => left.order_index - right.order_index),
+    )
+
+    const currentIndex = orderedTopics.findIndex((topic) => topic.id === currentTopic.id)
+
+    return {
+      previousTopic: currentIndex > 0 ? orderedTopics[currentIndex - 1] : null,
+      nextTopic: currentIndex >= 0 && currentIndex < orderedTopics.length - 1 ? orderedTopics[currentIndex + 1] : null,
+    }
+  },
+
   async getTopic(topicId: string): Promise<TopicDetail | null> {
     const { data: topicData, error: topicError } = await supabase
       .from('topics')
