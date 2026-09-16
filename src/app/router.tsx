@@ -10,6 +10,7 @@ import { CoursesPage } from '../pages/CoursesPage'
 import { DashboardPage } from '../pages/DashboardPage'
 import { LandingPage } from '../pages/LandingPage'
 import { LoginPage } from '../pages/LoginPage'
+import { NotFoundPage } from '../pages/NotFoundPage'
 import { ProfilePage } from '../pages/ProfilePage'
 import { ProgressPage } from '../pages/ProgressPage'
 import { SettingsPage } from '../pages/SettingsPage'
@@ -86,8 +87,10 @@ const router = createBrowserRouter([
       { path: 'progress', element: <ProgressPage /> },
       { path: 'profile', element: <ProfilePage /> },
       { path: 'settings', element: <SettingsPage /> },
+      { path: '*', element: <NotFoundPage /> },
     ],
   },
+  { path: '*', element: <NotFoundPage /> },
 ])
 
 export function AppRouter() {
