@@ -1,15 +1,11 @@
-export type CourseSummary = {
-  id: string
-  title: string
-  slug: string
-  description: string
-  level: 'beginner' | 'intermediate' | 'advanced'
+import type { Course, Module, Topic } from '../../types/database.types'
+
+export type CourseSummary = Course
+
+export type CourseModuleWithTopics = Module & {
+  topics: Topic[]
 }
 
-export type CourseDetail = CourseSummary & {
-  modules: Array<{
-    id: string
-    title: string
-    topicIds: string[]
-  }>
+export type CourseDetail = Course & {
+  modules: CourseModuleWithTopics[]
 }

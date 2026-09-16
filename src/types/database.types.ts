@@ -3,67 +3,84 @@ export type Course = {
   title: string
   slug: string
   description: string
-  level: 'beginner' | 'intermediate' | 'advanced'
-  moduleIds: string[]
-  createdAt: string
+  level: string
+  published: boolean
+  order_index: number
+  created_at: string
+  updated_at: string
 }
 
 export type Module = {
   id: string
-  courseId: string
+  course_id: string
   title: string
-  order: number
-  topicIds: string[]
+  slug: string
+  description: string
+  order_index: number
+  published: boolean
+  created_at: string
+  updated_at: string
 }
 
 export type Topic = {
   id: string
-  moduleId: string
+  module_id: string
   title: string
   slug: string
   description: string
-  order: number
-  content: TopicContent
+  order_index: number
+  published: boolean
+  created_at: string
+  updated_at: string
 }
 
 export type TopicContent = {
+  id: string
+  topic_id: string
+  definition: string
   explanation: string
-  example: string
-  practice: string
-  hint?: string
-  solution?: string
+  key_points: string[]
+  why_it_matters: string
+  common_mistakes: string[]
+  example_code: string | null
+  compiler_url: string | null
+  created_at: string
+  updated_at: string
 }
 
 export type PracticeProblem = {
   id: string
-  topicId: string
-  prompt: string
-  starterCode?: string
-  difficulty: 'easy' | 'medium' | 'hard'
+  topic_id: string
+  question: string
+  hint: string | null
+  solution: string | null
+  difficulty: string
+  order_index: number
+  created_at: string
+  updated_at: string
 }
 
 export type UserProgress = {
   id: string
-  userId: string
-  courseId: string
-  topicId: string
+  user_id: string
+  topic_id: string
   completed: boolean
-  progressPercent: number
-  updatedAt: string
+  completed_at: string | null
+  updated_at: string
 }
 
 export type UserNote = {
   id: string
-  userId: string
-  topicId: string
+  user_id: string
+  topic_id: string
   content: string
-  createdAt: string
-  updatedAt: string
+  created_at: string
+  updated_at: string
 }
 
 export type Bookmark = {
   id: string
-  userId: string
-  topicId: string
-  createdAt: string
+  user_id: string
+  topic_id: string
+  created_at: string
 }

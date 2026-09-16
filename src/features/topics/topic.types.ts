@@ -1,8 +1,9 @@
+import type { Course, Module, PracticeProblem, Topic, TopicContent } from '../../types/database.types'
+
 export type TopicDetail = {
-  id: string
-  title: string
-  description: string
-  lesson: string
-  example: string
-  practicePrompt: string
+  topic: Topic
+  module: Module | null
+  course: Course | null
+  topicContent: TopicContent | null
+  practiceProblems: PracticeProblem[]
 }
