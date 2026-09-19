@@ -66,6 +66,9 @@ export type UserProgress = {
   topic_id: string
   completed: boolean
   completed_at: string | null
+  started_at: string | null
+  last_activity_at: string | null
+  learning_time_seconds: number | null
   updated_at: string
 }
 

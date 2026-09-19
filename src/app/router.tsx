@@ -3,6 +3,7 @@ import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
 import { AppLayout } from '../components/layout/AppLayout'
 import { LoadingState } from '../components/ui/State'
 import { useAuth } from '../features/auth/AuthProvider'
+import { AboutPage } from '../pages/AboutPage'
 import { AuthCallbackPage } from '../pages/AuthCallbackPage'
 import { BookmarksPage } from '../pages/BookmarksPage'
 import { CourseDetailsPage } from '../pages/CourseDetailsPage'
@@ -87,6 +88,7 @@ const router = createBrowserRouter([
       { path: 'progress', element: <ProgressPage /> },
       { path: 'profile', element: <ProfilePage /> },
       { path: 'settings', element: <SettingsPage /> },
+      { path: 'about', element: <AboutPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],
   },

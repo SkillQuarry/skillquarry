@@ -8,11 +8,11 @@ interface CardProps extends PropsWithChildren {
 
 export function Card({ title, subtitle, className = '', children }: CardProps) {
   return (
-    <div className={`panel p-5 ${className}`.trim()}>
+    <div className={`panel p-4 shadow-[var(--shadow-soft)] transition-all duration-200 hover:-translate-y-0.5 hover:border-sky-200 sm:p-5 ${className}`.trim()}>
       {title ? (
         <div className="mb-4">
-          <div className="text-lg font-semibold text-slate-900">{title}</div>
-          {subtitle ? <div className="mt-1 text-sm text-slate-500">{subtitle}</div> : null}
+          <div className="text-lg font-semibold text-[var(--text-primary)]">{title}</div>
+          {subtitle ? <div className="mt-1 text-sm text-[var(--text-soft)]">{subtitle}</div> : null}
         </div>
       ) : null}
       {children}

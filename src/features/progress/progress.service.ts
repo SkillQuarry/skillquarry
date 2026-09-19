@@ -125,17 +125,23 @@ export const progressService = {
     }
 
     const timestamp = new Date().toISOString()
+    const existingProgress = await this.getProgress(topicId)
+
+    const nextProgress = {
+      user_id: user.id,
+      topic_id: topicId,
+      completed,
+      completed_at: completed ? existingProgress?.completed_at ?? timestamp : null,
+      started_at: existingProgress?.started_at ?? timestamp,
+      last_activity_at: timestamp,
+      learning_time_seconds: existingProgress?.learning_time_seconds ?? 0,
+      updated_at: timestamp,
+    }
 
     const { data, error } = await supabase
       .from('user_progress')
       .upsert(
-        {
-          user_id: user.id,
-          topic_id: topicId,
-          completed,
-          completed_at: completed ? timestamp : null,
-          updated_at: timestamp,
-        },
+        nextProgress,
         { onConflict: 'user_id,topic_id' },
       )
       .select('*')

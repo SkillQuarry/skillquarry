@@ -4,7 +4,7 @@
 
 :root {
   --app-bg: #f8fafc;
-  --panel: rgba(255, 255, 255, 0.9);
+  --panel: rgba(255, 255, 255, 0.92);
   --surface-muted: #f1f5f9;
   --surface-hover: #e2e8f0;
   --border: #e2e8f0;
@@ -94,5 +94,11 @@ select {
 
   .panel {
     @apply rounded-2xl border border-[var(--border)] bg-[var(--panel)] shadow-sm;
+  }
+}
+
+@media (max-width: 640px) {
+  .page-shell {
+    @apply max-w-full;
   }
 }
