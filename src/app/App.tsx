@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 
 import { AppProviders } from './providers'
 import { AppRouter } from './router'
+import { AppOpeningSplash } from '../components/branding/AppOpeningSplash'
 
 type ThemePreference = 'light' | 'dark' | 'system'
 
@@ -46,6 +47,7 @@ export default function App() {
   return (
     <AppProviders>
       <AppRouter />
+      <AppOpeningSplash />
     </AppProviders>
   )
 }

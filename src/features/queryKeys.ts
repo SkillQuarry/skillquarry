@@ -6,5 +6,7 @@ export const queryKeys = {
   progressOverview: (courseId: string) => ['progress', 'course', courseId],
   bookmarks: ['bookmarks'],
   notes: (topicId: string) => ['notes', topicId],
+  allNotes: ['notes'],
+  doubts: ['doubts'],
   profile: ['profile'],
 } as const

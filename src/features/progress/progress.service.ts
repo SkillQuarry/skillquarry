@@ -26,6 +26,8 @@ export type CompletedTopicSummary = {
   moduleTitle: string | null
   courseTitle: string | null
   completedAt: string | null
+  lastActivityAt: string | null
+  learningTimeSeconds: number
 }
 
 export type ContinueLearningSummary = {
@@ -195,6 +197,8 @@ export const progressService = {
           moduleTitle: module?.title ?? null,
           courseTitle: course.title,
           completedAt: progressMap.get(topic.id)?.completed_at ?? null,
+          lastActivityAt: progressMap.get(topic.id)?.last_activity_at ?? null,
+          learningTimeSeconds: progressMap.get(topic.id)?.learning_time_seconds ?? 0,
         }
       })
       .sort((a, b) => {

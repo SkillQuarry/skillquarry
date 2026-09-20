@@ -1,0 +1,16 @@
+{
+  "name": "SkillQuarry",
+  "short_name": "SkillQuarry",
+  "description": "A beginner-friendly programming learning platform.",
+  "start_url": "/app/dashboard",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#0284c7",
+  "background_color": "#f8fafc",
+  "icons": [
+    { "src": "/brand/192_192PWA.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/brand/512_512PWA.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/brand/maskable_pwa_icon.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

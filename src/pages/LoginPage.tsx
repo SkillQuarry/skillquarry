@@ -35,6 +35,7 @@ export function LoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-50 p-6">
       <Card title="Welcome back" subtitle="Login to continue learning" className="w-full max-w-md">
+        <img src="/brand/primary_full_logo.png" alt="SkillQuarry" className="mx-auto mb-6 h-10 max-w-[13rem] object-contain" />
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
             <label className="mb-1 block text-sm font-medium text-slate-700">Email</label>

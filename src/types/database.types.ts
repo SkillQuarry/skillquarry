@@ -87,3 +87,51 @@ export type Bookmark = {
   topic_id: string
   created_at: string
 }
+
+export type SupportRequest = {
+  id: string
+  user_id: string
+  type: 'question' | 'contact'
+  category: string | null
+  subject: string
+  message: string
+  requester_email: string | null
+  requester_name: string | null
+  course_id: string | null
+  topic_id: string | null
+  status: 'open' | 'in_progress' | 'resolved'
+  created_at: string
+  updated_at: string
+}
+
+export type Doubt = {
+  id: string
+  user_id: string
+  course_id: string | null
+  topic_id: string | null
+  category: string
+  subject: string
+  message: string
+  status: 'open' | 'in_progress' | 'resolved'
+  created_at: string
+  updated_at: string
+}
+
+export type DoubtAnswer = {
+  id: string
+  doubt_id: string
+  author_id: string | null
+  author_name: string | null
+  answer: string
+  created_at: string
+  updated_at: string
+}
+
+export type DoubtComment = {
+  id: string
+  doubt_id: string
+  user_id: string
+  comment: string
+  created_at: string
+  updated_at: string
+}

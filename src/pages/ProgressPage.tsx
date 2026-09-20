@@ -8,6 +8,7 @@ import { PageHeader } from '../components/ui/PageHeader'
 import { EmptyState, LoadingState } from '../components/ui/State'
 import { courseService } from '../features/courses/course.service'
 import { progressService, type CourseProgressOverview } from '../features/progress/progress.service'
+import { formatDuration, formatLocalDateTime } from '../utils/date'
 
 export function ProgressPage() {
   const [courseOverview, setCourseOverview] = useState<CourseProgressOverview | null>(null)
@@ -102,7 +103,7 @@ export function ProgressPage() {
 
           <div className="h-3 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700">
             <div
-              className="h-full rounded-full bg-sky-500"
+              className="sq-progress h-full rounded-full bg-sky-500"
               style={{ width: `${summary.completionPercentage}%` }}
             />
           </div>
@@ -251,7 +252,7 @@ export function ProgressPage() {
                 </div>
                 {topic.completedAt ? (
                   <div className="mt-2 text-xs text-[var(--text-soft)]">
-                    Finished on {new Date(topic.completedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                    Completed {formatLocalDateTime(topic.completedAt)} · Learning time {formatDuration(topic.learningTimeSeconds)}
                   </div>
                 ) : null}
               </li>

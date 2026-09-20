@@ -5,6 +5,9 @@ import { courseService } from './courses/course.service'
 import { notesService } from './notes/notes.service'
 import { progressService } from './progress/progress.service'
 import { queryKeys } from './queryKeys'
+import { supabase } from '../lib/supabase'
+import { topicService } from './topics/topic.service'
+import { doubtsService } from './doubts/doubts.service'
 
 export function useCoursesQuery() {
   return useQuery({
@@ -35,7 +38,6 @@ export function useTopicQuery(topicId: string | null) {
         return null
       }
 
-      const { topicService } = await import('./topics/topic.service')
       return topicService.getTopic(topicId)
     },
     enabled: Boolean(topicId),
@@ -74,7 +76,7 @@ export function useProfileQuery() {
   return useQuery({
     queryKey: queryKeys.profile,
     queryFn: async () => {
-      const { data } = await import('../lib/supabase').then((module) => module.supabase.auth.getUser())
+      const { data } = await supabase.auth.getUser()
       return data.user
     },
   })
@@ -91,6 +93,30 @@ export function useProgressMutation() {
         queryClient.invalidateQueries({ queryKey: queryKeys.progress }),
         queryClient.refetchQueries({ queryKey: queryKeys.progressOverview(variables.topicId) }),
       ])
+    },
+  })
+}
+
+export function useAllNotesQuery() {
+  return useQuery({
+    queryKey: queryKeys.allNotes,
+    queryFn: () => notesService.listNotes(),
+  })
+}
+
+export function useDoubtsQuery() {
+  return useQuery({
+    queryKey: queryKeys.doubts,
+    queryFn: () => doubtsService.listDoubts(),
+  })
+}
+
+export function useCreateDoubtMutation() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: doubtsService.createDoubt,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: queryKeys.doubts })
     },
   })
 }

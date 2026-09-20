@@ -12,6 +12,8 @@ import { DashboardPage } from '../pages/DashboardPage'
 import { LandingPage } from '../pages/LandingPage'
 import { LoginPage } from '../pages/LoginPage'
 import { NotFoundPage } from '../pages/NotFoundPage'
+import { NotesPage } from '../pages/NotesPage'
+import { ContactPage } from '../pages/ContactPage'
 import { ProfilePage } from '../pages/ProfilePage'
 import { ProgressPage } from '../pages/ProgressPage'
 import { SettingsPage } from '../pages/SettingsPage'
@@ -85,6 +87,8 @@ const router = createBrowserRouter([
       { path: 'courses/:courseId', element: <CourseDetailsPage /> },
       { path: 'courses/:courseId/topics/:topicId', element: <TopicPage /> },
       { path: 'bookmarks', element: <BookmarksPage /> },
+      { path: 'notes', element: <NotesPage /> },
+      { path: 'contact', element: <ContactPage /> },
       { path: 'progress', element: <ProgressPage /> },
       { path: 'profile', element: <ProfilePage /> },
       { path: 'settings', element: <SettingsPage /> },

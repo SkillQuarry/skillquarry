@@ -257,6 +257,9 @@ export function TopicPage() {
 
   const { topic, topicContent, course, module } = topicData
   const lessonPageLink = courseId ? `/app/courses/${courseId}` : '/app/courses'
+  const currentCourseModule = courseDetail?.modules.find((item) => item.id === module?.id) ?? null
+  const moduleIndex = courseDetail?.modules.findIndex((item) => item.id === module?.id) ?? -1
+  const topicIndex = currentCourseModule?.topics.findIndex((item) => item.id === topic.id) ?? -1
 
   const handleSaveNote = async () => {
     if (!topicId) return
@@ -419,6 +422,12 @@ export function TopicPage() {
         }
       />
 
+      <div className="grid gap-3 rounded-2xl border border-[var(--border)] bg-[var(--surface-muted)]/60 p-4 text-sm sm:grid-cols-3">
+        <div><div className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--text-soft)]">Course</div><div className="mt-1 font-medium text-[var(--text-primary)]">{course?.title ?? 'Current course'}</div></div>
+        <div><div className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--text-soft)]">Module</div><div className="mt-1 font-medium text-[var(--text-primary)]">{module?.title ?? 'Current module'}{moduleIndex >= 0 && courseDetail ? ` · ${moduleIndex + 1} of ${courseDetail.modules.length}` : ''}</div></div>
+        <div><div className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--text-soft)]">Topic</div><div className="mt-1 font-medium text-[var(--text-primary)]">{topic.title}{topicIndex >= 0 && currentCourseModule ? ` · ${topicIndex + 1} of ${currentCourseModule.topics.length}` : ''}</div></div>
+      </div>
+
       <div className={`hidden gap-6 transition-all duration-200 lg:grid ${sidebarCollapsed ? 'lg:grid-cols-[64px_minmax(0,1fr)]' : 'lg:grid-cols-[280px_minmax(0,1fr)]'}`}>
         <aside className="sticky top-6 h-fit overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--panel)] shadow-sm transition-all duration-200">
           <div className="flex items-center justify-end border-b border-[var(--border)] p-2">
@@ -504,7 +513,7 @@ export function TopicPage() {
 
       {showTopicDrawer ? (
         <div className="fixed inset-0 z-40 bg-slate-900/40 p-4 lg:hidden" onClick={() => setShowTopicDrawer(false)}>
-          <div className="h-full rounded-3xl bg-[var(--panel)] p-4 shadow-2xl" onClick={(event) => event.stopPropagation()}>
+          <div className="flex h-full min-h-0 flex-col rounded-3xl bg-[var(--panel)] p-4 shadow-2xl" onClick={(event) => event.stopPropagation()}>
             <div className="mb-4 flex items-center justify-between gap-3">
               <div className="text-base font-semibold text-[var(--text-primary)]">Course topics</div>
               <button
@@ -517,7 +526,7 @@ export function TopicPage() {
               </button>
             </div>
 
-            <div className="space-y-3 overflow-y-auto pb-4">
+            <div className="min-h-0 flex-1 space-y-3 overflow-y-auto pb-4">
               {topicSidebar.map((moduleEntry) => {
                 const isExpanded = expandedModuleId === moduleEntry.moduleId
 
@@ -578,7 +587,7 @@ export function TopicPage() {
             onClick={(event) => event.stopPropagation()}
           >
             <div className="mb-4 flex items-center justify-between gap-3">
-              <div className="text-3xl" aria-hidden="true">🎉</div>
+              <div className="sq-completion-mark text-3xl" aria-hidden="true">🎉</div>
               <button
                 type="button"
                 aria-label="Close completion dialog"
@@ -685,7 +694,7 @@ export function TopicPage() {
           </p>
         </Card>
 
-        <Card title="Simple Explanation">
+        <Card title="Why does it matter?">
           <p className="text-base leading-7 text-[var(--text-muted)]">
             {topicContent?.explanation ?? 'No explanation is published for this topic yet.'}
           </p>
@@ -739,11 +748,11 @@ export function TopicPage() {
           </Card>
         ) : null}
 
-        <Card title="Common Mistakes">
+        <Card title="⚠️ Common Mistakes">
           {topicContent?.common_mistakes && topicContent.common_mistakes.length > 0 ? (
-            <ul className="list-disc space-y-2 pl-5 text-[var(--text-muted)]">
+            <ul className="space-y-3 text-[var(--text-muted)]">
               {topicContent.common_mistakes.map((mistake) => (
-                <li key={mistake}>{mistake}</li>
+                <li key={mistake} className="rounded-xl border border-amber-200 bg-amber-50 p-3 dark:border-amber-800 dark:bg-amber-950/30"><span className="font-medium text-amber-800 dark:text-amber-200">Watch for this:</span> {mistake}</li>
               ))}
             </ul>
           ) : (

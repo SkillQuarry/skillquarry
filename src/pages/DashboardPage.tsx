@@ -10,6 +10,7 @@ import { useAuth } from '../features/auth/AuthProvider'
 import { bookmarksService } from '../features/bookmarks/bookmarks.service'
 import { courseService } from '../features/courses/course.service'
 import { progressService, type CourseProgressOverview } from '../features/progress/progress.service'
+import { formatLocalDateTime } from '../utils/date'
 
 export function DashboardPage() {
   const { user } = useAuth()
@@ -167,7 +168,7 @@ export function DashboardPage() {
                   {topic.moduleTitle ? <div className="mt-1 text-xs text-slate-500">{topic.moduleTitle}</div> : null}
                   {topic.completedAt ? (
                     <div className="mt-2 text-xs text-slate-500">
-                      Completed {new Date(topic.completedAt).toLocaleDateString()}
+                      Completed {formatLocalDateTime(topic.completedAt)}
                     </div>
                   ) : null}
                 </li>
