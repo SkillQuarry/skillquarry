@@ -14,6 +14,7 @@ import { learningActivityService } from '../features/progress/learning-activity.
 import { progressService } from '../features/progress/progress.service'
 import { topicService } from '../features/topics/topic.service'
 import type { TopicDetail } from '../features/topics/topic.types'
+import { formatDuration, formatLocalDateTime } from '../utils/date'
 
 type TopicNavigation = {
   previousTopic: { id: string; title: string } | null
@@ -37,6 +38,8 @@ export function TopicPage() {
   const [noteSaving, setNoteSaving] = useState(false)
   const [noteSaved, setNoteSaved] = useState(false)
   const [progressCompleted, setProgressCompleted] = useState(false)
+  const [completedAt, setCompletedAt] = useState<string | null>(null)
+  const [learningTimeSeconds, setLearningTimeSeconds] = useState(0)
   const [progressToggling, setProgressToggling] = useState(false)
   const [bookmarked, setBookmarked] = useState(false)
   const [bookmarkToggling, setBookmarkToggling] = useState(false)
@@ -161,6 +164,8 @@ export function TopicPage() {
           nextTopic: adjacentTopics.nextTopic ? { id: adjacentTopics.nextTopic.id, title: adjacentTopics.nextTopic.title } : null,
         })
         setProgressCompleted(Boolean(progress?.completed))
+        setCompletedAt(progress?.completed_at ?? null)
+        setLearningTimeSeconds(progress?.learning_time_seconds ?? 0)
         setNoteText(note?.content ?? '')
         setNoteSaved(false)
         setBookmarked(bookmark)
@@ -343,6 +348,8 @@ export function TopicPage() {
       const updated = await progressService.updateProgress(topicId, true)
       const resultCompleted = Boolean(updated?.completed)
       setProgressCompleted(resultCompleted)
+      setCompletedAt(updated?.completed_at ?? null)
+      setLearningTimeSeconds(updated?.learning_time_seconds ?? learningTimeSeconds)
 
       if (resultCompleted) {
         setCompletionMeta({
@@ -422,10 +429,13 @@ export function TopicPage() {
         }
       />
 
-      <div className="grid gap-3 rounded-2xl border border-[var(--border)] bg-[var(--surface-muted)]/60 p-4 text-sm sm:grid-cols-3">
+      <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-muted)]/60 p-4">
+        <div className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-sky-600">Where am I?</div>
+        <div className="grid gap-3 text-sm sm:grid-cols-3">
         <div><div className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--text-soft)]">Course</div><div className="mt-1 font-medium text-[var(--text-primary)]">{course?.title ?? 'Current course'}</div></div>
         <div><div className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--text-soft)]">Module</div><div className="mt-1 font-medium text-[var(--text-primary)]">{module?.title ?? 'Current module'}{moduleIndex >= 0 && courseDetail ? ` · ${moduleIndex + 1} of ${courseDetail.modules.length}` : ''}</div></div>
         <div><div className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--text-soft)]">Topic</div><div className="mt-1 font-medium text-[var(--text-primary)]">{topic.title}{topicIndex >= 0 && currentCourseModule ? ` · ${topicIndex + 1} of ${currentCourseModule.topics.length}` : ''}</div></div>
+        </div>
       </div>
 
       <div className={`hidden gap-6 transition-all duration-200 lg:grid ${sidebarCollapsed ? 'lg:grid-cols-[64px_minmax(0,1fr)]' : 'lg:grid-cols-[280px_minmax(0,1fr)]'}`}>
@@ -688,19 +698,19 @@ export function TopicPage() {
   function renderContent() {
     return (
       <div className="space-y-6">
-        <Card title="What is it?">
+        <Card title="What is it?" subtitle="Learn the idea in plain language.">
           <p className="text-base leading-7 text-[var(--text-muted)]">
             {topicContent?.definition ?? 'Definition is not available for this topic yet.'}
           </p>
         </Card>
 
-        <Card title="Why does it matter?">
+        <Card title="Understand it" subtitle="Connect the idea to the way the code behaves.">
           <p className="text-base leading-7 text-[var(--text-muted)]">
             {topicContent?.explanation ?? 'No explanation is published for this topic yet.'}
           </p>
         </Card>
 
-        <Card title="Key Points">
+        <Card title="Key points" subtitle="Keep these details in mind as you read the example.">
           {topicContent?.key_points && topicContent.key_points.length > 0 ? (
             <ul className="list-disc space-y-2 pl-5 text-[var(--text-muted)]">
               {topicContent.key_points.map((point) => (
@@ -712,14 +722,14 @@ export function TopicPage() {
           )}
         </Card>
 
-        <Card title="Why It Matters">
+        <Card title="Why does it matter?" subtitle="What this concept helps you do.">
           <p className="text-base leading-7 text-[var(--text-muted)]">
             {topicContent?.why_it_matters ?? 'No rationale has been added for this topic yet.'}
           </p>
         </Card>
 
         {topicContent?.example_code ? (
-          <Card title="Example">
+          <Card title="See it" subtitle="Concept → concrete Java example">
             <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
               <p className="text-sm font-medium text-[var(--text-muted)]">Example code</p>
               <Button variant="secondary" onClick={handleCopyCode} type="button">
@@ -733,7 +743,7 @@ export function TopicPage() {
         ) : null}
 
         {topicContent?.compiler_url ? (
-          <Card title="Try It Yourself" subtitle="Experiment with the example in an external Java playground.">
+          <Card title="Try it" subtitle="Experiment with the example in an external Java playground.">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <p className="text-sm text-[var(--text-muted)]">Open the example in a separate environment to test and explore it hands-on.</p>
               <a
@@ -748,11 +758,18 @@ export function TopicPage() {
           </Card>
         ) : null}
 
-        <Card title="⚠️ Common Mistakes">
+        <Card title="Try it in your head" subtitle="Pause before checking the solution.">
+          <p className="text-sm leading-6 text-[var(--text-muted)]">
+            What do you think this example will do? Explain the important part in your own words, or imagine changing one value and predict what would happen.
+          </p>
+          <p className="mt-3 text-xs text-[var(--text-soft)]">This is a reflection prompt, not an automatically checked answer.</p>
+        </Card>
+
+        <Card title="⚠️ Common mistakes" subtitle="Turn a warning into a better mental model.">
           {topicContent?.common_mistakes && topicContent.common_mistakes.length > 0 ? (
             <ul className="space-y-3 text-[var(--text-muted)]">
               {topicContent.common_mistakes.map((mistake) => (
-                <li key={mistake} className="rounded-xl border border-amber-200 bg-amber-50 p-3 dark:border-amber-800 dark:bg-amber-950/30"><span className="font-medium text-amber-800 dark:text-amber-200">Watch for this:</span> {mistake}</li>
+                <li key={mistake} className="rounded-xl border border-amber-200 bg-amber-50 p-3 dark:border-amber-800 dark:bg-amber-950/30"><div className="font-medium text-amber-800 dark:text-amber-200">What beginners often do</div><div className="mt-1">{mistake}</div><div className="mt-2 text-xs text-amber-700 dark:text-amber-300">Better approach: revisit the explanation and test the idea with the example.</div></li>
               ))}
             </ul>
           ) : (
@@ -760,7 +777,7 @@ export function TopicPage() {
           )}
         </Card>
 
-        <Card title="Practice">
+        <Card title="Practice" subtitle="You just learned this. Now work with it.">
           {practiceProblems.length === 0 ? (
             <p className="text-[var(--text-soft)]">No practice problems are available for this topic yet.</p>
           ) : (
@@ -816,7 +833,7 @@ export function TopicPage() {
           </div>
         </Card>
 
-        <Card title="Personal Notes">
+        <Card title="My notes" subtitle="Write down something you want to remember.">
           <div className="space-y-3">
             <textarea
               value={noteText}
@@ -826,7 +843,7 @@ export function TopicPage() {
               }}
               rows={6}
               className="w-full rounded-xl border border-[var(--border)] bg-[var(--panel)] px-3 py-2 text-[var(--text-primary)] outline-none transition focus:border-sky-400 focus:ring-2 focus:ring-sky-100 dark:focus:ring-sky-900"
-              placeholder="Write your quick notes, reminders, or questions for this topic..."
+              placeholder="Write something you want to remember, explain, or ask about..."
             />
             <div className="flex flex-wrap items-center gap-3">
               <Button onClick={handleSaveNote} disabled={noteSaving} type="button">
@@ -840,8 +857,9 @@ export function TopicPage() {
         <Card className="border-sky-200 bg-gradient-to-br from-sky-50 to-white dark:border-sky-800 dark:from-sky-950/30 dark:to-slate-950">
           <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <div className="text-xs font-semibold uppercase tracking-[0.2em] text-sky-600">Ready to finish this lesson?</div>
-              <h3 className="mt-2 text-xl font-semibold text-[var(--text-primary)]">Complete your progress</h3>
+              <div className="text-xs font-semibold uppercase tracking-[0.2em] text-sky-600">Complete</div>
+              <h3 className="mt-2 text-xl font-semibold text-[var(--text-primary)]">Finish this lesson</h3>
+              {progressCompleted ? <p className="mt-2 text-sm text-[var(--text-muted)]">Completed {formatLocalDateTime(completedAt)} · Learning time {formatDuration(learningTimeSeconds)}</p> : <p className="mt-2 text-sm text-[var(--text-muted)]">Mark this lesson complete when you are ready to continue.</p>}
             </div>
 
             <Button
