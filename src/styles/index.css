@@ -181,7 +181,7 @@ select {
   display: grid;
   place-items: center;
   background: var(--app-bg);
-  animation: sq-opening-exit 280ms ease-out 700ms forwards;
+  animation: sq-opening-exit 900ms ease-out 2200ms forwards;
   pointer-events: none;
 }
 
